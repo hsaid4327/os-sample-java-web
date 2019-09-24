@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  application.properties: |
+    test=dev
+kind: ConfigMap
+metadata:
+  name: backbase-service-cm
+  
+ 
