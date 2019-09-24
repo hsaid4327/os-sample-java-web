@@ -1,0 +1,10 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+name: backbase-service 
+annotations:
+openshift.io/display-name: Backbase Service
+description: Backbase Service
+iconClass: icon-java
+tags: java,jee
+objects:
