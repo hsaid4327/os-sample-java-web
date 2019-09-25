@@ -1,0 +1,7 @@
+Node {                               
+ stage ("Build")                                     
+   echo '*** Build Comlete ***'                               
+ stage ("Deploy and Verify in Devlopment Env')                                     
+    echo '*** Deployment Starting ***'                                     
+ echo '*** Deployment Complete ***'                                
+ }
