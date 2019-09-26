@@ -1,4 +1,4 @@
-Node {                               
+node {                               
  stage ("Build")                                     
    echo '*** Build Comlete ***'                               
  stage ("Deploy and Verify in Devlopment Env")                                     
