@@ -1,7 +1,86 @@
-node {                               
- stage ("Build")                                     
-   echo '*** Build Comlete ***'                               
- stage ("Deploy and Verify in Devlopment Env")                                     
-    echo '*** Deployment Starting ***'                                     
- echo '*** Deployment Complete ***'                                
- }
+pipeline {
+    options {
+        // set a timeout of 60 minutes for this pipeline
+        timeout(time: 30, unit: 'MINUTES')
+    }
+    agent {
+      node {
+        label 'maven'
+      }
+    }
+    environment {
+        DEV_PROJECT = "backbase-dev"
+        QA_PROJECT = "backbase-qa"
+        APP_GIT_URL = "https://github.com/hsaid4327/os-sample-java-web.git"
+        
+
+        // DO NOT CHANGE THE GLOBAL VARS BELOW THIS LINE
+        APP_NAME = "backbaseservice"
+    }
+    stages {
+        stage('Build Application in dev'){
+          oc start-build ${APP_NAME}
+        }
+        stage('Wait for S2I build to complete') {
+            steps {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject( "${DEV_PROJECT}" ) {
+                            def bc = openshift.selector("bc", "${APP_NAME}")
+                            bc.logs('-f')
+                            def builds = bc.related('builds')
+                            builds.untilEach(1) {
+                                return (it.object().status.phase == "Complete")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+       stage('Wait for deployment in DEV env') {
+            steps {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject( "${DEV_PROJECT}" ) {
+                            def deployment = openshift.selector("dc", "${APP_NAME}").rollout()
+                            openshift.selector("dc", "${APP_NAME}").related('pods').untilEach(1) {
+                                return (it.object().status.phase == "Running")
+                            }
+                        }
+                    }
+                }
+            }
+       }
+          stage('Promote to QA Env') {
+            steps {
+                timeout(time: 60, unit: 'MINUTES') {
+                    input message: "Promote to qa?"
+                }
+                script {
+                    openshift.withCluster() {
+                    openshift.tag("${DEV_PROJECT}/${APP_NAME}:latest", "${QA_PROJECT}/${APP_NAME}:qa")
+                    }
+                }
+              }
+            }   
+       stage('Wait for deployment in QA env') {
+            steps {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject( "${QA_PROJECT}" ) {
+                            def deployment = openshift.selector("dc", "${APP_NAME}").rollout()
+                            openshift.selector("dc", "${APP_NAME}").related('pods').untilEach(1) {
+                                return (it.object().status.phase == "Running")
+                            }
+                        }
+                    }
+                }
+            }
+       }
+            
+   }        
+        
+    
+}
+      
+
