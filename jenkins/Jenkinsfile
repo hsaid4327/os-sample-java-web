@@ -19,7 +19,13 @@ pipeline {
     }
     stages {
         stage('Build Application in dev'){
-          oc start-build ${APP_NAME}
+         steps {
+          script{
+          sh '''oc set triggers dc/${APP_NAME} --disabled
+                oc start-build ${APP_NAME}
+                 '''
+          }
+         }
         }
         stage('Wait for S2I build to complete') {
             steps {
@@ -40,9 +46,10 @@ pipeline {
        stage('Wait for deployment in DEV env') {
             steps {
                 script {
+                    sh 'oc set triggers dc/${APP_NAME} --disabled -n ${QA_PROJECT}'
                     openshift.withCluster() {
                         openshift.withProject( "${DEV_PROJECT}" ) {
-                            def deployment = openshift.selector("dc", "${APP_NAME}").rollout()
+                            def deployment = openshift.selector("dc", "${APP_NAME}").rollout().latest()
                             openshift.selector("dc", "${APP_NAME}").related('pods').untilEach(1) {
                                 return (it.object().status.phase == "Running")
                             }
@@ -58,7 +65,7 @@ pipeline {
                 }
                 script {
                     openshift.withCluster() {
-                    openshift.tag("${DEV_PROJECT}/${APP_NAME}:latest", "${QA_PROJECT}/${APP_NAME}:qa")
+                    openshift.tag("${DEV_PROJECT}/${APP_NAME}:dev", "${QA_PROJECT}/${APP_NAME}:qa")
                     }
                 }
               }
@@ -68,7 +75,7 @@ pipeline {
                 script {
                     openshift.withCluster() {
                         openshift.withProject( "${QA_PROJECT}" ) {
-                            def deployment = openshift.selector("dc", "${APP_NAME}").rollout()
+                            def deployment = openshift.selector("dc", "${APP_NAME}").rollout().latest()
                             openshift.selector("dc", "${APP_NAME}").related('pods').untilEach(1) {
                                 return (it.object().status.phase == "Running")
                             }

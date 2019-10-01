@@ -38,7 +38,7 @@ objects:
     output:
       to:
         kind: ImageStreamTag
-        name: ${APPLICATION_NAME}:latest
+        name: ${APPLICATION_NAME}:dev
     postCommit: {}
     resources: {}
     runPolicy: Serial
@@ -128,7 +128,7 @@ objects:
         - ${APPLICATION_NAME}
         from:
           kind: ImageStreamTag
-          name: ${APPLICATION_NAME}:latest
+          name: ${APPLICATION_NAME}:dev
       type: ImageChange
     - type: ConfigChange
 - apiVersion: v1
@@ -178,7 +178,7 @@ objects:
   kind: RoleBinding
   metadata:
     name: edit
-    namespace: ${APPLICATION_NAME}-dev
+    namespace: backbase-dev
   roleRef:
     apiGroup: rbac.authorization.k8s.io
     kind: ClusterRole
@@ -186,7 +186,21 @@ objects:
   subjects:
   - kind: ServiceAccount
     name: jenkins
-    namespace: ${APPLICATION_NAME}-devops
+    namespace: backbase-devops
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: system:image-puller
+    namespace: backbase-dev
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: system:image-puller
+  subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: system:serviceaccounts:backbase-qa
+
 parameters:
 - description: The name for the application.
   displayName: Application Name
