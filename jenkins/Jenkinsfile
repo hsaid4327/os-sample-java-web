@@ -1,4 +1,3 @@
-
 pipeline {
     options {
         // set a timeout of 60 minutes for this pipeline
@@ -36,10 +35,10 @@ pipeline {
           sh "pwd"
           sh "ls"
           sh '''cp config/application-dev.properties config/application.properties
-                oc create configmap ${APP_NAME}-cm --from file config/application.properties --dry-run -o yaml | oc create -f -'''
-          sh '''oc set triggers dc/${APP_NAME} --disabled
-                oc start-build ${APP_NAME}
-                 '''
+                oc create configmap ${APP_NAME}-cm --from-file config/application.properties --dry-run -o yaml | oc replace -f -'''
+          sh "oc start-build ${APP_NAME}"
+                
+                 
           }
          }
         }
@@ -102,7 +101,7 @@ pipeline {
                        
                    '''
                              sh '''cp config/application-qa.properties config/application.properties
-                oc create configmap ${APP_NAME}-cm --from file config/application.properties --dry-run -o yaml | oc create -f -'''
+                                   oc create configmap ${APP_NAME}-cm --from-file config/application.properties --dry-run -o yaml | oc replace -f -'''
                    
             
                 

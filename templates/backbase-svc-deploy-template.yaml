@@ -74,7 +74,7 @@ objects:
     test: false
     triggers:
     - imageChangeParams:
-        automatic: true
+        automatic: false 
         containerNames:
         - ${APPLICATION_NAME}
         from:
