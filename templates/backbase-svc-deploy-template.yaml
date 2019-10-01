@@ -15,17 +15,6 @@ objects:
   kind: ConfigMap
   metadata:
     name: ${APPLICATION_NAME}-cm
-- apiVersion: image.openshift.io/v1
-  kind: ImageStream
-  metadata:
-    annotations:
-    labels:
-      app: ${APPLICATION_NAME}
-    name: ${APPLICATION_NAME}:${APPLICATION_ENV}
-  spec:
-    lookupPolicy:
-      local: false
-
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
