@@ -21,49 +21,11 @@ objects:
     annotations:
     labels:
       app: ${APPLICATION_NAME}
-    name: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}:${APPLICATION_ENV}
   spec:
     lookupPolicy:
       local: false
-- apiVersion: build.openshift.io/v1
-  kind: BuildConfig
-  metadata:
-    annotations:
-    labels:
-      app: ${APPLICATION_NAME}
-    name: ${APPLICATION_NAME}
-  spec:
-    failedBuildsHistoryLimit: 5
-    nodeSelector: null
-    output:
-      to:
-        kind: ImageStreamTag
-        name: ${APPLICATION_NAME}:dev
-    postCommit: {}
-    resources: {}
-    runPolicy: Serial
-    source:
-      git:
-        uri: ${SOURCE_REPOSITORY_URL} 
-      type: Git
-    strategy:
-      sourceStrategy:
-        from:
-          kind: ImageStreamTag
-          name: jboss-eap71-openshift:latest
-          namespace: openshift
-      type: Source
-    successfulBuildsHistoryLimit: 5
-    triggers:
-    - github:
-        secret: TaWpibLZlzEAyTO6QyOk
-      type: GitHub
-    - generic:
-        secret: oT9gvKSqBzg5BC7_y8Qf
-      type: Generic
-    - type: ConfigChange
-    - imageChange:
-      type: ImageChange
+
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -128,7 +90,7 @@ objects:
         - ${APPLICATION_NAME}
         from:
           kind: ImageStreamTag
-          name: ${APPLICATION_NAME}:dev
+          name: ${APPLICATION_NAME}:${APPLICATION_ENV}
       type: ImageChange
     - type: ConfigChange
 - apiVersion: v1
@@ -174,32 +136,7 @@ objects:
       name: ${APPLICATION_NAME}
       weight: 100
     wildcardPolicy: None
-- apiVersion: rbac.authorization.k8s.io/v1
-  kind: RoleBinding
-  metadata:
-    name: edit
-    namespace: backbase-dev
-  roleRef:
-    apiGroup: rbac.authorization.k8s.io
-    kind: ClusterRole
-    name: edit
-  subjects:
-  - kind: ServiceAccount
-    name: jenkins
-    namespace: backbase-devops
-- apiVersion: rbac.authorization.k8s.io/v1
-  kind: RoleBinding
-  metadata:
-    name: system:image-puller
-    namespace: backbase-dev
-  roleRef:
-    apiGroup: rbac.authorization.k8s.io
-    kind: ClusterRole
-    name: system:image-puller
-  subjects:
-  - apiGroup: rbac.authorization.k8s.io
-    kind: Group
-    name: system:serviceaccounts:backbase-qa
+
 
 parameters:
 - description: The name for the application.
@@ -211,8 +148,4 @@ parameters:
   name: APPLICATION_ENV
   required: true
   value: dev
-- description: Git source URI for application
-  displayName: Git Repository URL
-  name: SOURCE_REPOSITORY_URL
-  required: true
-  value: https://github.com/hsaid4327/os-sample-java-web.git 
+
