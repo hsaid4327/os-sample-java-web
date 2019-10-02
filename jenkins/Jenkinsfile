@@ -29,14 +29,13 @@ pipeline {
        }
         
         stage('Build Application in dev'){
-         steps {
-          script{
-          sh "oc project backbase-dev"
-          sh "pwd"
-          sh "ls"
-          sh '''cp config/application-dev.properties config/application.properties
-                oc create configmap ${APP_NAME}-cm --from-file config/application.properties --dry-run -o yaml | oc replace -f -'''
-          sh "oc start-build ${APP_NAME}"
+           steps {
+             script{
+                 sh "oc project backbase-dev"
+
+                 sh '''cp config/application-dev.properties config/application.properties
+                 oc create configmap ${APP_NAME}-cm --from-file config/application.properties --dry-run -o yaml | oc replace -f -'''
+                  sh "oc start-build ${APP_NAME}"
                 
                  
           }
@@ -44,7 +43,7 @@ pipeline {
         }
         stage('Wait for S2I build to complete') {
             steps {
-                script {
+               script {
                     openshift.withCluster() {
                         openshift.withProject( "${DEV_PROJECT}" ) {
                             def bc = openshift.selector("bc", "${APP_NAME}")
@@ -55,12 +54,13 @@ pipeline {
                             }
                         }
                     }
-                }
+                } 
+  
             }
         }
        stage('Wait for deployment in DEV env') {
             steps {
-                script {
+              script {
                     
                     openshift.withCluster() {
                         openshift.withProject( "${DEV_PROJECT}" ) {
@@ -70,12 +70,14 @@ pipeline {
                             }
                         }
                     }
-                }
-            }
+                } 
+
+            } 
+            
        }
           stage('Promote to QA Env') {
             steps {
-                timeout(time: 60, unit: 'MINUTES') {
+                timeout(time: 10, unit: 'MINUTES') {
                     input message: "Promote to qa?"
                 }
                 script {
@@ -85,22 +87,23 @@ pipeline {
                 }
               }
             }   
-       stage('Wait for deployment in QA env') {
-            steps {
-               echo '### Cleaning existing resources in Staging ###'
-                sh '''
+           stage('Wait for deployment in QA env') {
+               steps {
+                    echo '### Cleaning existing resources in Staging ###'
+                     sh '''
                         oc project ${QA_PROJECT}
                         oc delete all -l app=${APP_NAME}
                         sleep 5
                    '''
+                      sh "oc delete configmap ${APP_NAME}-cm"
 
-                echo '### Creating a new app in Staging ###'
-                sh '''
+                      echo '### Creating a new app in QA ###'
+                      sh '''
                         oc project ${QA_PROJECT}
                         oc process -f templates/backbase-svc-deploy-template.yaml -p APPLICATION_NAME=${APP_NAME} -p APPLICATION_ENV=qa | oc create -f -
                        
                    '''
-                             sh '''cp config/application-qa.properties config/application.properties
+                      sh '''cp config/application-qa.properties config/application.properties
                                    oc create configmap ${APP_NAME}-cm --from-file config/application.properties --dry-run -o yaml | oc replace -f -'''
                    
             
