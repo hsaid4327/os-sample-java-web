@@ -20,6 +20,8 @@ pipeline {
     stages {
         
        stage('Get source code') {
+           
+           
            steps {
                script{
                    git credentialsId: 'git-repo', url: 'https://github.com/hsaid4327/os-sample-java-web.git'
@@ -27,8 +29,26 @@ pipeline {
                }
            }
        }
-        
-        
+       // configmap are not deleted by oc deleta all. Need to do this step to aviod building them again with template which results in error 
+      stage('check configmap in dev'){
+	       when {
+		expression {
+		  openshift.withCluster(){
+                     openshift.withProject( "${DEV_PROJECT}" ) {
+		        return openshift.selector("configmap", "${APP_NAME}-cm").exists();
+                    }
+		  }
+		}
+	      }         
+          steps{
+               script{
+                 
+                 sh "oc delete configamp/${APP_NAME-cm} -n backbase-dev"
+            
+             }
+
+          }     
+      }  
 
 
        stage('Build Application in dev'){
@@ -102,7 +122,28 @@ pipeline {
                 }
               }
             }   
-           stage('Wait for deployment in QA env') {
+           
+       stage('check configmap in QA'){
+	       when {
+		expression {
+		  openshift.withCluster(){
+                     openshift.withProject( "${QA_PROJECT}" ) {
+		        return openshift.selector("configmap", "${APP_NAME}-cm").exists();
+                    }
+		  }
+		}
+	      }         
+          steps{
+               script{
+                 
+                 sh "oc delete configamp/${APP_NAME-cm} -n backbase-qa"
+            
+             }
+
+          }     
+      }          
+         
+        stage('Wait for deployment in QA env') {
                steps {
                     echo '### Cleaning existing resources in Staging ###'
                      sh '''
