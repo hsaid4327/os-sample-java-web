@@ -36,14 +36,7 @@ pipeline {
              script{
                  sh "oc project backbase-dev"
                  sh "oc delete all -l app=${APP_NAME}"
-                 /*sh '''result=$(oc get cm | grep ${APP_NAME}-cm)
-                        if [ -n "$result" ]
-                          then
-                             sh "oc delete configmap ${APP_NAME}-cm"
-                          else
-                        echo There is no configmap 
-                        fi
-                  '''*/
+
            
                  sh "oc process -f templates/backbase-svc-build-template.yaml -p APPLICATION_NAME=${APP_NAME} | oc create -f -"
                 
@@ -73,13 +66,14 @@ pipeline {
                                       
                         sh '''
                         oc project ${DEV_PROJECT}
+
+
+                        oc process -f templates/backbase-svc-deploy-template.yaml -p APPLICATION_NAME=${APP_NAME} -p APPLICATION_ENV=dev | oc create -f -
                         cp config/application-dev.properties config/application.properties
                         oc create configmap ${APP_NAME}-cm --from-file config/application.properties --dry-run -o yaml | oc replace -f -
                         oc label configmap/${APP_NAME}-cm app=${APP_NAME}
-
-                        oc process -f templates/backbase-svc-deploy-template.yaml -p APPLICATION_NAME=${APP_NAME} -p APPLICATION_ENV=dev | oc create -f -
-                       
-                   '''            
+                  
+                        '''            
                   
                 script {
                     
@@ -116,25 +110,20 @@ pipeline {
                         oc delete all -l app=${APP_NAME}
                         sleep 5
                    '''
-                 /*     sh '''result=$(oc get cm | grep ${APP_NAME}-cm)
-                        if [ -n "$result" ]
-                          then
-                             sh "oc delete configmap ${APP_NAME}-cm"
-                          else
-                        echo the string is empty
-                        fi
-                  ''' */
 
-                      sh '''cp config/application-qa.properties config/application.properties
-                           oc create configmap ${APP_NAME}-cm --from-file config/application.properties --dry-run -o yaml | oc replace -f -
-                           oc label configmap/${APP_NAME}-cm app=${APP_NAME}'''
-
-                      echo '### Creating a new app in QA ###'
-                      sh '''
+                      
+                     sh '''
                         oc project ${QA_PROJECT}
                         oc process -f templates/backbase-svc-deploy-template.yaml -p APPLICATION_NAME=${APP_NAME} -p APPLICATION_ENV=qa | oc create -f -
                        
                    '''
+                      
+                     sh '''cp config/application-qa.properties config/application.properties
+                           oc create configmap ${APP_NAME}-cm --from-file config/application.properties --dry-run -o yaml | oc replace -f -
+                           oc label configmap/${APP_NAME}-cm app=${APP_NAME}'''
+
+                      echo '### Creating a new app in QA ###'
+
       
                 
                 script {
