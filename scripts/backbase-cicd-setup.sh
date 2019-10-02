@@ -7,7 +7,7 @@ oc new-project backbase-devops
 
 
 echo ******** Creating Jenkins server *************
-oc new-app jenkins-persistent -p MEMORY_LIMIT=2048Mi
+oc new-app jenkins-persistent -p MEMORY_LIMIT=2048Mi -p ENABLE_OAUTH=false -e JENKINS_PASSWORD=admin123
 sleep 10
 echo ***** Creating Project rolebindings *********
 # With admin access, this can be uncommented 
