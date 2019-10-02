@@ -1,3 +1,13 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+name: backbase-pipeline
+annotations:
+openshift.io/display-name: Backbase Service pipeline
+description: Backbase devops
+iconClass: icon-java
+tags: jenkins
+objects:
 - apiVersion: build.openshift.io/v1
   kind: BuildConfig
   metadata:

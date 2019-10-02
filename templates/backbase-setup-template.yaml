@@ -1,13 +1,12 @@
-apiVersion: template.openshift.io/v1
+piVersion: template.openshift.io/v1
 kind: Template
 metadata:
-name: backbase-rolebinding-setup 
+name: setup
 annotations:
-openshift.io/display-name: Backbase Service
+openshift.io/display-name: Backbase cicd setup
 description: Backbase Service
-iconClass: icon-jenkins
+iconClass: icon-java
 tags: java,jee
-
 objects:
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: RoleBinding
