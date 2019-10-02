@@ -33,12 +33,12 @@ pipeline {
              script{
                  sh "oc project backbase-dev"
                  sh "oc delete all -l app=${APP_NAME}"
-                 sh '''result=$(oc get cm | grep ${APP-NAME}-cm)
+                 sh '''result=$(oc get cm | grep ${APP_NAME}-cm)
                         if [ -n "$result" ]
                           then
                              sh "oc delete configmap ${APP_NAME}-cm"
                           else
-                        echo the string is empty
+                        echo There is no configmap 
                         fi
                   '''
            
@@ -112,7 +112,7 @@ pipeline {
                         oc delete all -l app=${APP_NAME}
                         sleep 5
                    '''
-                     sh '''result=$(oc get cm | grep ${APP-NAME}-cm)
+                     sh '''result=$(oc get cm | grep ${APP_NAME}-cm)
                         if [ -n "$result" ]
                           then
                              sh "oc delete configmap ${APP_NAME}-cm"
