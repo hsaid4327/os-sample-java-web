@@ -28,7 +28,10 @@ pipeline {
            }
        }
         
-        stage('Build Application in dev'){
+        
+
+
+       stage('Build Application in dev'){
            steps {
              script{
                  sh "oc project backbase-dev"
@@ -72,7 +75,8 @@ pipeline {
                         oc project ${DEV_PROJECT}
                         cp config/application-dev.properties config/application.properties
                         oc create configmap ${APP_NAME}-cm --from-file config/application.properties --dry-run -o yaml | oc replace -f -
-                        
+                        oc label configmap/${APP_NAME}-cm app=${APP_NAME}
+
                         oc process -f templates/backbase-svc-deploy-template.yaml -p APPLICATION_NAME=${APP_NAME} -p APPLICATION_ENV=dev | oc create -f -
                        
                    '''            
@@ -122,7 +126,8 @@ pipeline {
                   ''' */
 
                       sh '''cp config/application-qa.properties config/application.properties
-                           oc create configmap ${APP_NAME}-cm --from-file config/application.properties --dry-run -o yaml | oc replace -f -'''
+                           oc create configmap ${APP_NAME}-cm --from-file config/application.properties --dry-run -o yaml | oc replace -f -
+                           oc label configmap/${APP_NAME}-cm app=${APP_NAME}'''
 
                       echo '### Creating a new app in QA ###'
                       sh '''

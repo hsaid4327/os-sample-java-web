@@ -14,6 +14,8 @@ objects:
       test=${APPLICATION_ENV}
   kind: ConfigMap
   metadata:
+    labels:
+     app: ${APPLICATION_NAME}
     name: ${APPLICATION_NAME}-cm
 - apiVersion: v1
   kind: DeploymentConfig
