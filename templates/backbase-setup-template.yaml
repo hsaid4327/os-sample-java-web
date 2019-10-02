@@ -1,0 +1,50 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+name: backbase-rolebinding-setup 
+annotations:
+openshift.io/display-name: Backbase Service
+description: Backbase Service
+iconClass: icon-jenkins
+tags: java,jee
+
+objects:
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: edit
+    namespace: backbase-dev
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: edit
+  subjects:
+  - kind: ServiceAccount
+    name: jenkins
+    namespace: backbase-devops
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: edit
+    namespace: backbase-qa
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: edit
+  subjects:
+  - kind: ServiceAccount
+    name: jenkins
+    namespace: backbase-devops
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: system:image-puller
+    namespace: backbase-dev
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: system:image-puller
+  subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: system:serviceaccounts:backbase-qa

@@ -1,9 +1,9 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
-name: ${APPLICATION_NAME} 
+name: ${APPLICATION_NAME}-deployment-template 
 annotations:
-openshift.io/display-name: Backbase Service
+openshift.io/display-name: Backbase Service deployment
 description: Backbase Service
 iconClass: icon-java
 tags: java,jee
@@ -137,4 +137,3 @@ parameters:
   name: APPLICATION_ENV
   required: true
   value: dev
-
