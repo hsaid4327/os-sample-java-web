@@ -33,14 +33,14 @@ pipeline {
              script{
                  sh "oc project backbase-dev"
                  sh "oc delete all -l app=${APP_NAME}"
-                 sh '''result=$(oc get cm | grep ${APP_NAME}-cm)
+                 /*sh '''result=$(oc get cm | grep ${APP_NAME}-cm)
                         if [ -n "$result" ]
                           then
                              sh "oc delete configmap ${APP_NAME}-cm"
                           else
                         echo There is no configmap 
                         fi
-                  '''
+                  '''*/
            
                  sh "oc process -f templates/backbase-svc-build-template.yaml -p APPLICATION_NAME=${APP_NAME} | oc create -f -"
                 
@@ -112,14 +112,14 @@ pipeline {
                         oc delete all -l app=${APP_NAME}
                         sleep 5
                    '''
-                     sh '''result=$(oc get cm | grep ${APP_NAME}-cm)
+                 /*     sh '''result=$(oc get cm | grep ${APP_NAME}-cm)
                         if [ -n "$result" ]
                           then
                              sh "oc delete configmap ${APP_NAME}-cm"
                           else
                         echo the string is empty
                         fi
-                  '''
+                  ''' */
 
                       sh '''cp config/application-qa.properties config/application.properties
                            oc create configmap ${APP_NAME}-cm --from-file config/application.properties --dry-run -o yaml | oc replace -f -'''
