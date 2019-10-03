@@ -54,7 +54,7 @@ pipeline {
       }  
        
      // if the buildconfig does not exist, use the template to create it
-       stage('verify and start build'){
+       stage('verify and create build objects'){
 	       when {
 		expression {
 		  openshift.withCluster(){
