@@ -3,12 +3,14 @@ pipeline {
         // set a timeout of 60 minutes for this pipeline
         timeout(time: 30, unit: 'MINUTES')
     }
-    agent {
+   /* agent {
       node {
         label 'maven'
       }
-    }
-    environment {
+    } */
+   agent any
+    
+   environment {
         DEV_PROJECT = "backbase-dev"
         QA_PROJECT = "backbase-qa"
         APP_GIT_URL = "https://github.com/hsaid4327/os-sample-java-web.git"
