@@ -25,7 +25,10 @@ objects:
       git:
         ref: master
         uri: https://github.com/hsaid4327/os-sample-java-web.git
+      sourceSecret:
+        name: git-repo-secret 
       type: Git
+     
     strategy:
       jenkinsPipelineStrategy:
         jenkinsfilePath: Jenkinsfile

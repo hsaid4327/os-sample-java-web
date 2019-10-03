@@ -37,8 +37,11 @@ objects:
     runPolicy: Serial
     source:
       git:
-        uri: ${SOURCE_REPOSITORY_URL} 
+        uri: ${SOURCE_REPOSITORY_URL}
+      sourceSecret:
+        name: git-repo-secret 
       type: Git
+        	
     strategy:
       sourceStrategy:
         from:

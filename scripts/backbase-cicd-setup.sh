@@ -16,5 +16,10 @@ oc policy add-role-to-user edit system:serviceaccount:backbase-devops:jenkins -n
 oc policy add-role-to-user edit system:serviceaccount:backbase-devops:jenkins -n backbase-qa
 oc project backbase-dev
 oc policy add-role-to-group system:image-puller system:serviceaccounts:backbase-qa -n backbase-dev
+oc create secret generic git-repo-secret --from-literal=username=hsaid4327 --from-literal=password=NabIla4327 --type=kubernetes.io/basic-auth
 oc project backbase-devops
+oc create secret generic git-repo-secret --from-literal=username=hsaid4327 --from-literal=password=NabIla4327 --type=kubernetes.io/basic-auth
 oc process -f ../templates/pipeline-bc.yaml | oc create -f -
+
+
+ 
