@@ -24,7 +24,7 @@ pipeline {
            
            steps {
                script{
-                   git credentialsId: 'git-repo', url: 'https://github.com/hsaid4327/os-sample-java-web.git'
+                   git credentialsId: 'backbase-devops-git-repo-secret', url: 'https://github.com/hsaid4327/os-sample-java-web.git'
                    
                }
            }
