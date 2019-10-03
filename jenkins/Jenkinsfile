@@ -45,7 +45,7 @@ pipeline {
 	      }         
           steps{
                script{
-                 
+                 sh "oc project ${DEV_PROJECT}"
                  sh "oc start-build ${APP_NAME}"
             
              }
@@ -66,7 +66,7 @@ pipeline {
 	      }         
           steps{
                script{
-                 
+                 sh "oc project ${DEV_PROJECT}"
                  sh "oc process -f templates/backbase-svc-build-template.yaml -p APPLICATION_NAME=${APP_NAME} | oc create -f -"
             
              }
@@ -107,7 +107,7 @@ pipeline {
 	      }         
           steps{
                script{
-                 
+                 sh "oc project ${DEV_PROJECT}"
                  sh "oc process -f templates/backbase-svc-build-template.yaml -p APPLICATION_NAME=${APP_NAME} | oc create -f -"
                  sh "oc process -f templates/backbase-svc-deploy-template.yaml -p APPLICATION_NAME=${APP_NAME} -p APPLICATION_ENV=dev | oc create -f -"
             
@@ -171,7 +171,7 @@ pipeline {
 	      }         
           steps{
                script{
-                 
+                 sh "oc project ${QA_PROJECT}"
                  sh "oc process -f templates/backbase-svc-build-template.yaml -p APPLICATION_NAME=${APP_NAME} | oc create -f -"
                  sh "oc process -f templates/backbase-svc-deploy-template.yaml -p APPLICATION_NAME=${APP_NAME} -p APPLICATION_ENV=dev | oc create -f -"
             
