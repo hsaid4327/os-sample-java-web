@@ -29,13 +29,16 @@ pipeline {
                }
            }
        }
-       // configmap are not deleted by oc deleta all. Need to do this step to aviod building them again with template which results in error 
-      stage('check configmap in dev'){
+
+    
+    // verify that buildConfig exists and starts the build
+      
+      stage('verify and start build'){
 	       when {
 		expression {
 		  openshift.withCluster(){
                      openshift.withProject( "${DEV_PROJECT}" ) {
-		        return openshift.selector("cm", "backbase-service-cm").exists();
+		        return openshift.selector("bc", "${APP_NAME}").exists();
                     }
 		  }
 		}
@@ -43,28 +46,37 @@ pipeline {
           steps{
                script{
                  
-                 sh "oc delete configmap/${APP_NAME}-cm -n backbase-dev"
+                 sh "oc start-build ${APP_NAME}"
             
              }
 
           }     
       }  
-
-
-       stage('Build Application in dev'){
-           steps {
-             script{
-                 sh "oc project backbase-dev"
-                 sh "oc delete all -l app=${APP_NAME}"
-
-           
-                 sh "oc process -f templates/backbase-svc-build-template.yaml -p APPLICATION_NAME=${APP_NAME} | oc create -f -"
-                
+       
+     // if the buildconfig does not exist, use the template to create it
+       stage('verify and start build'){
+	       when {
+		expression {
+		  openshift.withCluster(){
+                     openshift.withProject( "${DEV_PROJECT}" ) {
+		        return !openshift.selector("bc", "${APP_NAME}").exists();
+                    }
+		  }
+		}
+	      }         
+          steps{
+               script{
                  
-          }
-         }
-        }
-        stage('Wait for S2I build to complete') {
+                 sh "oc process -f templates/backbase-svc-build-template.yaml -p APPLICATION_NAME=${APP_NAME} | oc create -f -"
+            
+             }
+
+          }     
+      }      
+
+
+        
+     stage('Wait for S2I build to complete') {
             steps {
                script {
                     openshift.withCluster() {
@@ -81,18 +93,38 @@ pipeline {
   
             }
         }
-       stage('Wait for deployment in DEV env') {
+       
+     // if the deployment objects do not exist in dev, use the template to create it
+       stage('verify and create deployment objects'){
+	       when {
+		expression {
+		  openshift.withCluster(){
+                     openshift.withProject( "${DEV_PROJECT}" ) {
+		        return !openshift.selector("dc", "${APP_NAME}").exists();
+                    }
+		  }
+		}
+	      }         
+          steps{
+               script{
+                 
+                 sh "oc process -f templates/backbase-svc-build-template.yaml -p APPLICATION_NAME=${APP_NAME} | oc create -f -"
+                 oc process -f templates/backbase-svc-deploy-template.yaml -p APPLICATION_NAME=${APP_NAME} -p APPLICATION_ENV=dev | oc create -f -
+            
+             }
+
+          }     
+      }      
+       
+      
+     stage('Wait for deployment in DEV env') {
             steps {
                                       
                         sh '''
                         oc project ${DEV_PROJECT}
-
-
-                        oc process -f templates/backbase-svc-deploy-template.yaml -p APPLICATION_NAME=${APP_NAME} -p APPLICATION_ENV=dev | oc create -f -
                         cp config/application-dev.properties config/application.properties
                         oc create configmap ${APP_NAME}-cm --from-file config/application.properties --dry-run -o yaml | oc replace -f -
-                        oc label configmap/${APP_NAME}-cm app=${APP_NAME}
-                  
+                   
                         '''            
                   
                 script {
@@ -110,7 +142,9 @@ pipeline {
             } 
             
        }
-          stage('Promote to QA Env') {
+          
+    
+       stage('Promote to QA Env') {
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
                     input message: "Promote to qa?"
@@ -123,12 +157,14 @@ pipeline {
               }
             }   
            
-       stage('check configmap in QA'){
+
+      // if the deployment objects do not exist in qa, use the template to create it
+       stage('verify and create deployment objects'){
 	       when {
 		expression {
 		  openshift.withCluster(){
                      openshift.withProject( "${QA_PROJECT}" ) {
-		        return openshift.selector("cm", "backbase-service-cm").exists();
+		        return !openshift.selector("dc", "${APP_NAME}").exists();
                     }
 		  }
 		}
@@ -136,35 +172,23 @@ pipeline {
           steps{
                script{
                  
-                 sh "oc delete configmap/${APP_NAME}-cm -n backbase-qa"
+                 sh "oc process -f templates/backbase-svc-build-template.yaml -p APPLICATION_NAME=${APP_NAME} | oc create -f -"
+                 oc process -f templates/backbase-svc-deploy-template.yaml -p APPLICATION_NAME=${APP_NAME} -p APPLICATION_ENV=dev | oc create -f -
             
              }
 
           }     
-      }          
-         
-        stage('Wait for deployment in QA env') {
+      }              
+        
+
+      stage('Wait for deployment in QA env') {
                steps {
-                    echo '### Cleaning existing resources in Staging ###'
-                     sh '''
+                        sh '''
                         oc project ${QA_PROJECT}
-                        oc delete all -l app=${APP_NAME}
-                        sleep 5
-                   '''
-
-                      
-                     sh '''
-                        oc project ${QA_PROJECT}
-                        oc process -f templates/backbase-svc-deploy-template.yaml -p APPLICATION_NAME=${APP_NAME} -p APPLICATION_ENV=qa | oc create -f -
-                       
-                   '''
-                      
-                     sh '''cp config/application-qa.properties config/application.properties
-                           oc create configmap ${APP_NAME}-cm --from-file config/application.properties --dry-run -o yaml | oc replace -f -
-                           oc label configmap/${APP_NAME}-cm app=${APP_NAME}'''
-
-                      echo '### Creating a new app in QA ###'
-
+                        cp config/application-dev.properties config/application.properties
+                        oc create configmap ${APP_NAME}-cm --from-file config/application.properties --dry-run -o yaml | oc replace -f -
+                   
+                        '''      
       
                 
                 script {
