@@ -35,7 +35,7 @@ pipeline {
 		expression {
 		  openshift.withCluster(){
                      openshift.withProject( "${DEV_PROJECT}" ) {
-		        return openshift.selector("configmap", "${APP_NAME}-cm").exists();
+		        return openshift.selector("cm", "backbase-service-cm").exists();
                     }
 		  }
 		}
@@ -43,7 +43,7 @@ pipeline {
           steps{
                script{
                  
-                 sh "oc delete configamp/${APP_NAME-cm} -n backbase-dev"
+                 sh "oc delete configamp/${APP_NAME}-cm -n backbase-dev"
             
              }
 
@@ -128,7 +128,7 @@ pipeline {
 		expression {
 		  openshift.withCluster(){
                      openshift.withProject( "${QA_PROJECT}" ) {
-		        return openshift.selector("configmap", "${APP_NAME}-cm").exists();
+		        return openshift.selector("cm", "backbase-service-cm").exists();
                     }
 		  }
 		}
@@ -136,7 +136,7 @@ pipeline {
           steps{
                script{
                  
-                 sh "oc delete configamp/${APP_NAME-cm} -n backbase-qa"
+                 sh "oc delete configamp/${APP_NAME}-cm -n backbase-qa"
             
              }
 
