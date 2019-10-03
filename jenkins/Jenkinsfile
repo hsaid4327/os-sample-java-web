@@ -95,7 +95,7 @@ pipeline {
         }
        
      // if the deployment objects do not exist in dev, use the template to create it
-       stage('verify and create deployment objects'){
+       stage('verify and create deployment objects in dev'){
 	       when {
 		expression {
 		  openshift.withCluster(){
@@ -159,7 +159,7 @@ pipeline {
            
 
       // if the deployment objects do not exist in qa, use the template to create it
-       stage('verify and create deployment objects'){
+       stage('verify and create deployment objects in QA'){
 	       when {
 		expression {
 		  openshift.withCluster(){
