@@ -43,7 +43,7 @@ pipeline {
           steps{
                script{
                  
-                 sh "oc delete configamp/${APP_NAME}-cm -n backbase-dev"
+                 sh "oc delete configmap/${APP_NAME}-cm -n backbase-dev"
             
              }
 
@@ -136,7 +136,7 @@ pipeline {
           steps{
                script{
                  
-                 sh "oc delete configamp/${APP_NAME}-cm -n backbase-qa"
+                 sh "oc delete configmap/${APP_NAME}-cm -n backbase-qa"
             
              }
 
