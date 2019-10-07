@@ -6,6 +6,9 @@
   <version>1.1-SNAPSHOT</version>
   <name>getting-started-tomcat Maven Webapp</name>
   <url>http://maven.apache.org</url>
+  <properties>
+      <project.scm.id>git-repo</project.scm.id>
+  </properties>
    <scm>
         <!-- <connection>scm:git:git://localhost/svn/gswm/trunk</connection> -->
         <developerConnection>scm:git:https://github.com/hsaid4327/os-sample-java-web.git</developerConnection>
