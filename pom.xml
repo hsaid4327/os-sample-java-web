@@ -7,7 +7,11 @@
   <version>1.0-SNAPSHOT</version>
   <name>getting-started-tomcat Maven Webapp</name>
   <url>http://maven.apache.org</url>
-
+   <scm>
+        <!-- <connection>scm:git:git://localhost/svn/gswm/trunk</connection> -->
+        <developerConnection>scm:git:git:github.com/hsaid4327/os-sample-java-web.git</developerConnection>
+        <!-- <url>http://localhost/svn/gswm/trunk</url> -->
+   </scm>
 
   <dependencies>
       <!-- http://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
@@ -28,6 +32,11 @@
                   <warName>ROOT</warName>
               </configuration>
           </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.3</version>
+      </plugin>
       </plugins>
   </build>
 </project>
