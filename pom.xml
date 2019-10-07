@@ -15,7 +15,10 @@
          <url>https://github.com/hsaid4327/os-sample-java-web.git</url>
      <tag>HEAD</tag>
   </scm>
-
+  <repository>
+    <id>git-repo</id>
+    <url>https://github.com/hsaid4327/os-sample-java-web.git</url>
+ </repository>
   <dependencies>
       <!-- http://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
       <dependency>
