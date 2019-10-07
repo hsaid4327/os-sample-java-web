@@ -10,7 +10,7 @@
       <project.scm.id>git-repo</project.scm.id>
   </properties>
    <scm>
-        <!-- <connection>scm:git:git://localhost/svn/gswm/trunk</connection> -->
+         <connectionUrl>scm:git:https://github.com/hsaid4327/os-sample-java-web.git</connectionUrl> 
         <developerConnection>scm:git:https://github.com/hsaid4327/os-sample-java-web.git</developerConnection>
          <url>https://github.com/hsaid4327/os-sample-java-web.git</url>
      <tag>HEAD</tag>
