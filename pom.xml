@@ -10,7 +10,7 @@
       <project.scm.id>git-repo</project.scm.id>
   </properties>
    <scm>
-         <connectionUrl>scm:git:https://github.com/hsaid4327/os-sample-java-web.git</connectionUrl> 
+         <connection>scm:git:https://github.com/hsaid4327/os-sample-java-web.git</connection> 
         <developerConnection>scm:git:https://github.com/hsaid4327/os-sample-java-web.git</developerConnection>
          <url>https://github.com/hsaid4327/os-sample-java-web.git</url>
      <tag>HEAD</tag>
