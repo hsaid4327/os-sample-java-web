@@ -22,7 +22,7 @@
          <connection>scm:git:https://github.com/hsaid4327/os-sample-java-web.git</connection> 
         <developerConnection>scm:git:https://github.com/hsaid4327/os-sample-java-web.git</developerConnection>
          <url>https://github.com/hsaid4327/os-sample-java-web.git</url>
-    <tag>getting-started-tomcat-1.0</tag>
+   
   </scm>
   <dependencies>
       <!-- http://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
