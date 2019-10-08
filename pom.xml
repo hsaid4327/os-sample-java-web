@@ -14,7 +14,7 @@
         <uniqueVersion>false</uniqueVersion>
         <id>git-demo-repo</id>
         <name>Demo Repository</name>
-        <url>https://github.com/hsaid4327/os-sample-java-web.git</url>
+        <url>file:////home/hsaid/.m2</url>
         <layout>default</layout>
     </repository>
  </distributionManagement>
