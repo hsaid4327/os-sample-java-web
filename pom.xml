@@ -17,7 +17,7 @@
         <url>https://github.com/hsaid4327/os-sample-java-web.git</url>
         <layout>default</layout>
     </repository>
- </distributionManagment>
+ </distributionManagement>
    <scm>
          <connection>scm:git:https://github.com/hsaid4327/os-sample-java-web.git</connection> 
         <developerConnection>scm:git:https://github.com/hsaid4327/os-sample-java-web.git</developerConnection>
